@@ -85,7 +85,7 @@ async function getCharacterInventory(url) {
     } else if (el.className === "inv-item") {
       let rank = el.children[1].textContent.trim();
       let name = el.children[2].children[0].textContent.trim();
-      inventory[currentSection].push(`${name} (${rank})`);
+      inventory[currentSection].push(`${name} (${rank}[i][/i])`);
     }
   }
 
@@ -119,7 +119,7 @@ async function build(characterSheetURL, inventoryURL) {
       consumables,
     } = await getCharacterInventory(inventoryURL);
 
-    let output = `${hp} HP | ${ac} AC
+    let output = `[bdark]${hp} HP | ${ac} AC
 
 ${accuracy.join(", ")}
 
@@ -146,7 +146,7 @@ ${equipment.join("\n")}
 ${trinkets.join("\n")}
 
 [b]CONSUMABLES[/b]
-${consumables.join("\n")} `;
+${consumables.join("\n")}[/bdark]`;
 
     return output;
   } catch (error) {

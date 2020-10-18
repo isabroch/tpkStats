@@ -2,17 +2,16 @@
   #characterLinks { display: grid; gap: 1ch; }
   #characterLinks label { display: flex; align-items: center; gap: 1ch; }
   #characterLinks input { flex: 1; padding: 5px; }
-  #output { max-height: 50vh; overflow-y: scroll; user-select: all; white-space: pre-wrap;}
+  #output { max-height: 50vh; overflow-y: scroll; user-select: all; white-space: pre-wrap; padding: 1em; }
   </style>
 
   <div class="block post dark">
   <form id="characterLinks">
-  <label> Character Sheet <input type="text" name="sheet" id="sheet" required placeholder="link to character sheet" /> </label>
-  <label> Inventory <input type="text" name="inventory" id="inventory" required placeholder="link to inventory" /> </label>
+  <label> Profile Link <input type="text" name="profileLink" id="profileLink" required placeholder="http://tpk.jcink.net/index.php?showuser=??" /> </label>
   <input type="submit" value="Generate" />
   </form>
   </div>
 
-  <div id="output" class="block post dark">Please generate content first!</div>
+  <div class="block post dark"><div id="output">Please generate content first!</div></div>
 
   <script src="https://cdn.jsdelivr.net/gh/isabroch/tpkStats@latest/script.js" defer></script>

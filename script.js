@@ -155,13 +155,15 @@ ${consumables.join("\n")} `;
   }
 }
 
-function handleSubmit(e) {
+async function handleSubmit(e) {
   const data = new FormData(e.target);
 
-  let sheetURL = data.get("sheet");
-  let inventoryURL = data.get("inventory");
-
-  console.log(sheetURL, inventoryURL);
+  // let sheetURL = data.get("sheet");
+  // let inventoryURL = data.get("inventory");
+  let profileURL = data.get("profileLink");
+  // let profileURL = "http://tpk.jcink.net/index.php?showuser=45";
+  let profile = await getPageAsDOM(profileURL);
+  let [sheetURL, inventoryURL] = [...profile.querySelectorAll(".cpnavin a")].map( el => el.href );
 
   build(sheetURL, inventoryURL).then(
     (output) => (document.querySelector("#output").innerText = output)

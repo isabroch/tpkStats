@@ -85,7 +85,7 @@ async function getCharacterInventory(url) {
     } else if (el.className === "inv-item") {
       let rank = el.children[1].textContent.trim();
       let name = el.children[2].children[0].textContent.trim();
-      inventory[currentSection].push(`${name} ( ${rank} )`);
+      inventory[currentSection].push(`${name} (‎${rank}‎)`);
     }
   }
 

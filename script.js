@@ -158,6 +158,8 @@ ${consumables.join("\n")}[/bdark]`;
 async function handleSubmit(e) {
   e.preventDefault();
 
+  document.querySelector("#output").innerText = "Loading..."
+
   const data = new FormData(e.target);
 
   // let sheetURL = data.get("sheet");

@@ -163,9 +163,9 @@ function handleSubmit(e) {
 
   console.log(sheetURL, inventoryURL);
 
-  const output = build(sheetURL, inventoryURL);
-
-  document.querySelector("#output").innerText = output;
+  build(sheetURL, inventoryURL).then(
+    (output) => (document.querySelector("#output").innerText = output)
+  );
 
   e.preventDefault();
 }

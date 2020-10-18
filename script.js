@@ -156,6 +156,8 @@ ${consumables.join("\n")} `;
 }
 
 async function handleSubmit(e) {
+  e.preventDefault();
+
   const data = new FormData(e.target);
 
   // let sheetURL = data.get("sheet");
@@ -169,7 +171,6 @@ async function handleSubmit(e) {
     (output) => (document.querySelector("#output").innerText = output)
   );
 
-  e.preventDefault();
 }
 
 document

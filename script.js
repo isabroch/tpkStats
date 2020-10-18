@@ -64,8 +64,8 @@ async function getCharacterSheet(url) {
 async function getCharacterInventory(url) {
   const doc = await getPageAsDOM(url);
 
-  const hp = doc.querySelectorAll(".inv-stat-num")[0].textContent;
-  const ac = doc.querySelectorAll(".inv-stat-num")[1].textContent;
+  const hp = doc.querySelectorAll(".inv-stat-num")[1].textContent;
+  const ac = doc.querySelectorAll(".inv-stat-num")[0].textContent;
 
   const inventoryHTML = doc.querySelector(".inv-section").children;
   let inventory = {};

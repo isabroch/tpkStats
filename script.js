@@ -32,7 +32,8 @@ function handleDescriptionPLS(el) {
     .trim();
 
   return `[spoiler=${name}]${`${description}
-${tags}`.trim()}[/spoiler]`;
+${tags}`.trim()}
+[/spoiler]`;
 }
 
 async function getCharacterSheet(url) {
@@ -128,7 +129,8 @@ async function getCharacterInventory(url) {
 
       inventory[currentSection].push(
         `[spoiler=${name} (‎${rank}‎)]${`${description}
-${tags}`.trim()}[/spoiler]`.trim()
+${tags}`.trim()}
+[/spoiler]`.trim()
       );
     }
   }
@@ -172,25 +174,25 @@ ${stats.join(", ")}
 ${techs.join(", ")}
 
 [b]TRAITS[/b]
-${traits.join("\n")}
+${traits.join("")}
 
 [b]PASSIVES[/b]
-${passives.join("\n")}
+${passives.join("")}
 
 [b]COMBAT MANEUVERS[/b]
-${cms.join("\n")}
+${cms.join("")}
 
 [b]WEAPONS[/b]
-${weapons.join("\n")}
+${weapons.join("")}
 
 [b]ARMOR[/b]
-${equipment.join("\n")}
+${equipment.join("")}
 
 [b]TRINKETS[/b]
-${trinkets.join("\n")}
+${trinkets.join("")}
 
 [b]CONSUMABLES[/b]
-${consumables.join("\n")}[/bdark]`;
+${consumables.join("")}[/bdark]`;
 
     return output;
   } catch (error) {

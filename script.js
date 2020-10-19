@@ -163,7 +163,7 @@ async function build(characterSheetURL, inventoryURL) {
       consumables,
     } = await getCharacterInventory(inventoryURL);
 
-    let output = `[dohtml]<style>details:not([open]) + br {display: none;}</style>[/dohtml][bdark]
+    let output = `[dohtml]<style>.ibInstaStat details:not([open]) + br {display: none;}</style> <div class="ibInstaStat"[/dohtml][bdark]
 ${hp} HP | ${ac} AC
 
 ${accuracy.join(", ")}
@@ -191,7 +191,8 @@ ${equipment.join("\n")}
 ${trinkets.join("\n")}
 
 [b]CONSUMABLES[/b]
-${consumables.join("\n")}[/bdark]`;
+${consumables.join("\n")}
+[/bdark][dohtml]</div>[/dohtml]`;
 
     return output;
   } catch (error) {

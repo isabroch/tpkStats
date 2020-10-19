@@ -32,8 +32,7 @@ function handleDescriptionPLS(el) {
     .trim();
 
   return `[spoiler=${name}]${`${description}
-${tags}`.trim()}
-[/spoiler]`;
+${tags}`.trim()}[/spoiler]`;
 }
 
 async function getCharacterSheet(url) {
@@ -129,8 +128,7 @@ async function getCharacterInventory(url) {
 
       inventory[currentSection].push(
         `[spoiler=${name} (‎${rank}‎)]${`${description}
-${tags}`.trim()}
-[/spoiler]`.trim()
+${tags}`.trim()}[/spoiler]`.trim()
       );
     }
   }
@@ -165,7 +163,8 @@ async function build(characterSheetURL, inventoryURL) {
       consumables,
     } = await getCharacterInventory(inventoryURL);
 
-    let output = `[bdark]${hp} HP | ${ac} AC
+    let output = `[dohtml]<style>details:not([open]) + br {display: none;}</style>[/dohtml][bdark]
+${hp} HP | ${ac} AC
 
 ${accuracy.join(", ")}
 
@@ -174,25 +173,25 @@ ${stats.join(", ")}
 ${techs.join(", ")}
 
 [b]TRAITS[/b]
-${traits.join("")}
+${traits.join("\n")}
 
 [b]PASSIVES[/b]
-${passives.join("")}
+${passives.join("\n")}
 
 [b]COMBAT MANEUVERS[/b]
-${cms.join("")}
+${cms.join("\n")}
 
 [b]WEAPONS[/b]
-${weapons.join("")}
+${weapons.join("\n")}
 
 [b]ARMOR[/b]
-${equipment.join("")}
+${equipment.join("\n")}
 
 [b]TRINKETS[/b]
-${trinkets.join("")}
+${trinkets.join("\n")}
 
 [b]CONSUMABLES[/b]
-${consumables.join("")}[/bdark]`;
+${consumables.join("\n")}[/bdark]`;
 
     return output;
   } catch (error) {

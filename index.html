@@ -1,17 +1,17 @@
 <style>
-  #characterLinks { display: grid; gap: 1ch; }
-  #characterLinks label { display: flex; align-items: center; gap: 1ch; }
-  #characterLinks input { flex: 1; padding: 5px; }
-  #output { max-height: 50vh; overflow-y: scroll; user-select: all; white-space: pre-wrap; padding: 1em; }
+  #characterLinksWITHDESC { display: grid; gap: 1ch; }
+  #characterLinksWITHDESC label { display: flex; align-items: center; gap: 1ch; }
+  #characterLinksWITHDESC input { flex: 1; padding: 5px; }
+  #outputWITHDESC { max-height: 50vh; overflow-y: scroll; user-select: all; white-space: pre-wrap; padding: 1em; }
   </style>
 
   <div class="block post dark">
-  <form id="characterLinks">
-  <label> Profile Link <input type="text" name="profileLink" id="profileLink" required placeholder="http://tpk.jcink.net/index.php?showuser=??" /> </label>
+  <form id="characterLinksWITHDESC">
+  <label> Profile Link <input type="text" name="profileLink" id="profileLinkWITHDESC" required placeholder="http://tpk.jcink.net/index.php?showuser=??" /> </label>
   <input type="submit" value="Generate" />
   </form>
   </div>
 
-  <div class="block post dark"><div id="output">Please generate content first!</div></div>
+  <div class="block post dark"><div id="outputWITHDESC">Please generate content first!</div></div>
 
   <script src="https://cdn.jsdelivr.net/gh/isabroch/tpkStats@latest/script.js"></script>

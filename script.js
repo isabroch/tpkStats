@@ -1,4 +1,4 @@
-function title(string) {
+(() => {function title(string) {
   return string.replace(/^\w/, (letter) => letter.toUpperCase());
 }
 
@@ -204,7 +204,7 @@ ${consumables.join("\n")}
 async function handleSubmit(e) {
   e.preventDefault();
 
-  document.querySelector("#output").innerText = "Loading...";
+  document.querySelector("#outputWITHDESC").innerText = "Loading...";
 
   const data = new FormData(e.target);
 
@@ -218,10 +218,11 @@ async function handleSubmit(e) {
   ].map((el) => el.href);
 
   build(sheetURL, inventoryURL).then(
-    (output) => (document.querySelector("#output").innerText = output)
+    (output) => (document.querySelector("#outputWITHDESC").innerText = output)
   );
 }
 
 document
-  .querySelector("#characterLinks")
-  .addEventListener("submit", handleSubmit);
+  .querySelector("#characterLinksWITHDESC")
+  .addEventListener("submit", handleSubmit);}
+)()

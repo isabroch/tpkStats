@@ -1,4 +1,4 @@
-(() => {function title(string) {
+function title(string) {
   return string.replace(/^\w/, (letter) => letter.toUpperCase());
 }
 
@@ -10,46 +10,66 @@ async function getPageAsDOM(url) {
   return html;
 }
 
-function handleDescriptionPLS(el) {
-  let name;
-  let description = "";
-  let tags = [...el.querySelectorAll("tech")]
-    .map((tag) => `[codeline]${tag.textContent}[/codeline]`)
-    .join(", ");
-  for (const node of [...el.childNodes]) {
-    if (node.tagName === "FEAT") {
-      name = node.textContent;
-    } else if (node.tagName !== "TECH") {
-      description += node.innerHTML
-        ? node.innerHTML.replace(/<tech>.*?<\/tech>/gi, "")
-        : node.textContent;
+async function getCharacterSheet(url) {
+  const doc = await getPageAsDOM(url);
+
+  var html = doc.querySelector(".cs-feats").children;
+
+  var sheetInfo = {};
+  let currentSection = null;
+
+  for (let i = 0; i < html.length; i++) {
+    const el = html[i];
+
+    if (el.textContent.includes("craft")) {
+      break;
+    }
+
+    if (el.tagName === "SUBHEADER") {
+      currentSection = el.textContent;
+      sheetInfo[currentSection] = [];
+    } else if (el.tagName === "OL") {
+      let items = [...el.children].map((item) => {
+        let nodes = [...item.childNodes];
+
+        let name;
+        let description = "";
+        let tags = [...el.querySelectorAll("tech")]
+          .map((tag) => `[codeline]${tag.textContent}[/codeline]`)
+          .join(", ");
+
+        for (let i = 0; i < nodes.length; i++) {
+          const node = nodes[i];
+
+          // ignore empty nodes
+          if (node.textContent.trim() === "") {
+            continue;
+          }
+
+          // feat is name OR there's no name yet
+          if (node.tagName === "FEAT" || name === undefined) {
+            name = node.textContent;
+          }
+
+          // description - works with techs that are wrapped inside p tags
+          else if (node.tagName !== "TECH") {
+            description += node.innerHTML
+              ? node.innerHTML.replace(/<tech>.*?<\/tech>/gi, "")
+              : node.textContent;
+          }
+        }
+
+        return `[spoiler=${name}]${`${description.trim()}
+${tags}`.trim()}[/spoiler]`;
+      });
+      sheetInfo[currentSection].push(...items);
     }
   }
 
-  description = new DOMParser()
-    .parseFromString(description, "text/html")
-    .body.textContent.replace(/\s+(end_)?bbc_codeline\s+/gi, " ")
-    .trim();
-
-  return `[spoiler=${name}]${`${description}
-${tags}`.trim()}[/spoiler]`;
-}
-
-async function getCharacterSheet(url) {
-  const characterSheet = await getPageAsDOM(url);
-
-  var sections = characterSheet.querySelectorAll(".cs-feats ol");
-
-  console.log(sections);
-
-  var traits = [...sections[0].children].map(handleDescriptionPLS);
-  var passives = [...sections[1].children].map(handleDescriptionPLS);
-  var cms = [...sections[2].children].map(handleDescriptionPLS);
-
-  var accuracy = [...characterSheet.querySelectorAll(".cs-weapon-rank")].map(
+  var accuracy = [...doc.querySelectorAll(".cs-weapon-rank")].map(
     (el, index) => `${index === 0 ? "Melee" : "Ranged"} (${el.textContent})`
   );
-  var techs = [...characterSheet.querySelectorAll(".cs-tech")].map((el) => {
+  var techs = [...doc.querySelectorAll(".cs-tech")].map((el) => {
     let techIcon = el.querySelector(".cs-tech-type i").className;
     let type = null;
 
@@ -64,7 +84,7 @@ async function getCharacterSheet(url) {
     return `${type}. ${name} (${prof})`;
   });
   var stats = () => {
-    const scriptText = characterSheet.scripts[16].textContent;
+    const scriptText = doc.scripts[16].textContent;
     const regex = /<div class="pstatdesc">(.*?)<\/div>\n<div class="pstatmod">(.*?)<\/div>/gm;
 
     const matches = [...scriptText.matchAll(regex)];
@@ -76,9 +96,7 @@ async function getCharacterSheet(url) {
     return stats;
   };
 
-  var build = { traits, passives, cms, accuracy, techs, stats: stats() };
-
-  console.log(build);
+  var build = { ...sheetInfo, accuracy, techs, stats: stats() };
 
   return build;
 }
@@ -102,7 +120,6 @@ async function getCharacterInventory(url) {
 
     if (el.localName === "subheader") {
       currentSection = el.textContent;
-      console.log(currentSection);
       inventory[currentSection] = [];
     } else if (el.className === "inv-item") {
       let rank = el.children[1].textContent.trim();
@@ -139,29 +156,15 @@ ${tags}`.trim()}[/spoiler]`.trim()
     ...inventory,
   };
 
-  console.log(build);
-
   return build;
 }
 
 async function build(characterSheetURL, inventoryURL) {
   try {
-    let {
-      stats,
-      accuracy,
-      cms,
-      passives,
-      techs,
-      traits,
-    } = await getCharacterSheet(characterSheetURL);
-    let {
-      hp,
-      ac,
-      weapons,
-      equipment,
-      trinkets,
-      consumables,
-    } = await getCharacterInventory(inventoryURL);
+    let { stats, accuracy, techs, ...sheet } = await getCharacterSheet(
+      characterSheetURL
+    );
+    let { hp, ac, ...inventory } = await getCharacterInventory(inventoryURL);
 
     let output = `[dohtml]<style>.ibInstaStat details:not([open]) + br {display: none;}</style> <div class="ibInstaStat"[/dohtml][bdark]
 ${hp} HP | ${ac} AC
@@ -172,26 +175,21 @@ ${stats.join(", ")}
 
 ${techs.join(", ")}
 
-[b]TRAITS[/b]
-${traits.join("\n")}
+${Object.entries(sheet)
+  .map(
+    (section) =>
+      `[b]${section[0].toUpperCase()}[/b]
+${section[1].join("\n")}`
+  )
+  .join("\n\n")}
 
-[b]PASSIVES[/b]
-${passives.join("\n")}
-
-[b]COMBAT MANEUVERS[/b]
-${cms.join("\n")}
-
-[b]WEAPONS[/b]
-${weapons.join("\n")}
-
-[b]ARMOR[/b]
-${equipment.join("\n")}
-
-[b]TRINKETS[/b]
-${trinkets.join("\n")}
-
-[b]CONSUMABLES[/b]
-${consumables.join("\n")}
+${Object.entries(inventory)
+  .map(
+    (section) =>
+      `[b]${section[0].toUpperCase()}[/b]
+${section[1].join("\n")}`
+  )
+  .join("\n\n")}
 [/bdark][dohtml]</div>[/dohtml]`;
 
     return output;
@@ -208,21 +206,22 @@ async function handleSubmit(e) {
 
   const data = new FormData(e.target);
 
-  // let sheetURL = data.get("sheet");
-  // let inventoryURL = data.get("inventory");
   let profileURL = data.get("profileLink");
-  // let profileURL = "http://tpk.jcink.net/index.php?showuser=45";
-  let profile = await getPageAsDOM(profileURL);
-  let [sheetURL, inventoryURL] = [
-    ...profile.querySelectorAll(".cpnavin a"),
-  ].map((el) => el.href);
 
-  build(sheetURL, inventoryURL).then(
+  buildFromProfile(profileURL).then(
     (output) => (document.querySelector("#outputWITHDESC").innerText = output)
   );
 }
 
+async function buildFromProfile(url) {
+  let profile = await getPageAsDOM(url);
+  let [sheetURL, inventoryURL] = [
+    ...profile.querySelectorAll(".cpnavin a"),
+  ].map((el) => el.href);
+
+  return await build(sheetURL, inventoryURL);
+}
+
 document
   .querySelector("#characterLinksWITHDESC")
-  .addEventListener("submit", handleSubmit);}
-)()
+  .addEventListener("submit", handleSubmit);

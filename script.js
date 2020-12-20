@@ -140,7 +140,7 @@ async function getCharacterInventory(url) {
 
       description = new DOMParser()
         .parseFromString(description, "text/html")
-        .body.textContent.replace(/\s+(end_)?bbc_codeline\s+/gi, " ")
+        .body.textContent.replace(/<!--.*?-->/gi, " ")
         .trim();
 
       inventory[currentSection].push(

@@ -34,7 +34,7 @@ async function getCharacterSheet(url) {
 
         let name;
         let description = "";
-        let tags = [...el.querySelectorAll("tech")]
+        let tags = [...item.querySelectorAll("tech")]
           .map((tag) => `[codeline]${tag.textContent}[/codeline]`)
           .join(", ");
 

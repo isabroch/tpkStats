@@ -58,6 +58,13 @@ async function getCharacterSheet(url) {
               : node.textContent;
           }
         }
+        
+        
+        // remove tags and comments from broken bbcode
+        description = new DOMParser()
+        .parseFromString(description, "text/html")
+        .body.textContent.replace(/<!--.*?-->/gi, " ")
+        .trim();
 
         return `[spoiler=${name}]${`${description.trim()}
 ${tags}`.trim()}[/spoiler]`;

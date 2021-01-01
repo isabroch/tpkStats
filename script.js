@@ -173,7 +173,7 @@ async function build(characterSheetURL, inventoryURL) {
     );
     let { hp, ac, ...inventory } = await getCharacterInventory(inventoryURL);
 
-    let output = `[dohtml]<style>.ibInstaStat details:not([open]) + br {display: none;}</style> <div class="ibInstaStat"[/dohtml][bdark]
+    let output = `[dohtml]<style>.ibInstaStat details:not([open]) + br {display: none;} .ibInstaStat summary {letter-spacing: 1px; font-size: 1.1em; margin-left: -1.1em;} .ibInstaStat details {margin-left: 1.1em;}</style> <div class="ibInstaStat"[/dohtml][bdark]
 ${hp} HP | ${ac} AC
 
 ${accuracy.join(", ")}
